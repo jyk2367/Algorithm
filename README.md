@@ -1,4 +1,4 @@
-# CodingTest
+# Algorithm
 프로그래머스, 백준 등 코딩 테스트 풀이를 기록합니다
 
 
