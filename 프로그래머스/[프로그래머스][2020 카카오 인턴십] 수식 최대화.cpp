@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
+#include <set>
 #include <algorithm>
+
 
 using namespace std;
 //3가지 연산문자(+,-,*)
@@ -12,14 +14,13 @@ using namespace std;
 // 계산결과가 음수면 해당 숫자의 절댓값으로 변환해서 가장 큰 수 선정
 // 우승자가 제출한 숫자를 우승상금으로 지급
 
-string operand="";
-
 
 long long solution(string expression) {
     long long answer = 0;
     int index=0;
     int E_SIZE=expression.length();
     vector<string> op;
+    set<string> operand_set;
     
     for(int i=0;i<E_SIZE;i++){
         if(expression[i]=='+'||expression[i]=='-'||expression[i]=='*'){
@@ -28,33 +29,23 @@ long long solution(string expression) {
             string tmp="";
             tmp+=expression[i];
             op.push_back(tmp);
+            operand_set.insert(tmp);
             
             index=i+1;
         }
     }
     op.push_back(expression.substr(index));
     
-    int operandSIZE=0;
-    if(count(op.begin(),op.end(),"*")>0){
-        operandSIZE++;
-        operand+="*";
-    }
-    if(count(op.begin(),op.end(),"+")>0){
-        operandSIZE++;
-        operand+="+";
-    }
-    if(count(op.begin(),op.end(),"-")>0){
-        operandSIZE++;
-        operand+="-";
-    }
+    vector<string> operand_vec(operand_set.begin(),operand_set.end());
+    
     do{
         vector<string> optr(op.begin(),op.end());
         index=0;
         long long total=0;
         
-        while(index<operandSIZE){
+        while(index<operand_vec.size()){
             string tmp="";
-            tmp+=operand[index];
+            tmp+=operand_vec[index];
             while(1){
                 vector<string>::iterator it=find(optr.begin(),optr.end(),tmp);
                 if(it!=optr.end()){
@@ -81,7 +72,7 @@ long long solution(string expression) {
             index++;
         }
         answer=max(answer,abs(total));
-    }while(next_permutation(operand.begin(),operand.end()));
+    }while(next_permutation(operand_vec.begin(),operand_vec.end()));
     
     
     
