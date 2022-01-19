@@ -21,26 +21,27 @@ int main() {
 
 	for (int i = 1; i <= N; i++) {
 		dp[i] = 1;
+		track[i] = -1;
 		for (int j = 1; j <i; j++) {
-			if (A[i] > A[j]) {
-				dp[i] = max(dp[j] + 1,dp[i]);
+			if (A[i] > A[j]&&dp[i]<dp[j]+1) {
+				dp[i] = dp[j] + 1;
+				track[i] = j;
 			}
 		}
-		if (answer < dp[i]) {
+
+		if (dp[i] > answer) {
 			answer = dp[i];
 			idx = i;
 		}
 	}
-	for (int i = idx; i >= 1; i--) {
-		if (dp[i] == answer) {
-			v.push_back(A[i]);
-			answer--;
-		}
+	
+	while (idx != -1) {
+		v.push_back(A[idx]);
+		idx = track[idx];
 	}
-
-	cout << v.size() << "\n";
-
-	for (int i = v.size() - 1; i >= 0;i--) {
+	
+	cout << answer << "\n";
+	for (int i = v.size() - 1; i >= 0; i--) {
 		cout << v[i] << " ";
 	}
 
