@@ -4,6 +4,7 @@
         "utility": "cpp",
         "iosfwd": "cpp",
         "xiosbase": "cpp",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "vector": "cpp"
     }
 }
