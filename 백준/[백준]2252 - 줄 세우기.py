@@ -1,60 +1,57 @@
-from collections import deque
-N,M=map(int,input().split())
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
 
-class Graph:
-    def __init__(self,N):
-        self.N=N
-        self.L=[ [] for _ in range(self.N)]
-        self.inDegree=[0 for _ in range(self.N)]
-        self.visited=[False for _ in range(self.N)]
-        self.result=deque()
+int N, M;
+struct Student {
+	int indegree;
+	int outdegree;
+	
+	vector<int> v;
+};
 
-    def link(self,i,j):
-        self.L[i].append(j)
-        self.inDegree[j]+=1
-        
+Student s[32'001];
 
-    def topologicalSort(self):
-        queue=deque()
-        for i in range(self.N):
-            if self.inDegree[i]==0:
-                queue.append(i)
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	
+	cin >> N >> M;
+	int a, b;
+	for (int i = 0; i < M; i++) {
+		cin >> a >> b;
+		s[a].outdegree++;
+		s[a].v.push_back(b);
+		s[b].indegree++;
+		s[b].v.push_back(a);
+	}
 
-        while queue:
-            now=queue.popleft()
-            print(now+1)
-            for n in self.L[now]:
-                self.inDegree[n]-=1
-                if self.inDegree[n]==0:
-                    queue.append(n)
+	queue<int> q;
+	vector<int> answer;
+	for (int i = 1; i <= N; i++) {
+		if (s[i].indegree == 0)
+			q.push(i);
+	}
 
-    def DFS(self,now):
-        self.visited[now]=True
+	while (!q.empty()) {
+		int now = q.front();
+		q.pop();
+		answer.push_back(now);
+		
+		vector<int>& connected = s[now].v;
+		int CSIZE = connected.size();
+		for (int i = 0; i < CSIZE; i++) {
+			int nx = connected[i];
+			s[nx].indegree--;
+			if (s[nx].indegree == 0)
+				q.push(nx);
+		}
+	}
 
-        while(len(self.L[now])>0):
-            next=self.L[now].pop(0)
-            if self.visited[next]==True:
-                continue
-            self.DFS(next)
-        self.result.appendleft(now+1)
-
-        
-
-        
-
-g=Graph(N)
-
-for i in range(M):
-    a,b=map(int,input().split())
-    g.link(a-1,b-1)
-
-
-for i in range(N):
-    if g.visited[i]==False:
-        g.DFS(i)
-
-
-for i in g.result:
-    print(i,end=" ")
-
-#g.topologicalSort()
+	for (int i = 0; i < answer.size(); i++) {
+		cout << answer[i] << " ";
+	}
+	return 0;
+}

@@ -1,51 +1,46 @@
 #include <bits/stdc++.h>
+#include <unordered_set>
+#define PRIMESIZE 1'000'001
+
 using namespace std;
 
-int A, B;
-bool primeCheck(int num);
-void setAB(int num);
+bool prime[PRIMESIZE];
 
-void setAB(int num) {
-	for (int i = 2; i <=num/2; i++) {
-		if (primeCheck(i) && primeCheck(num - i)) {
-			A = i;
-			B = num - i;
-			return;
+void makePrime() {
+	for (int i = 2; i * i <=PRIMESIZE; i++) {
+		if (prime[i])
+			continue;
+		for (int j = i + i; j <= PRIMESIZE; j += i) {
+			prime[j] = true;
 		}
 	}
-}
-
-bool primeCheck(int num) {
-	if (num < 2)
-		return false;
-	else if (num == 2)
-		return true;
-	for (int i = 2; i * i <= num; i++) {
-		if (num % i == 0)
-			return false;
-	}
-	return true;
 }
 
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
-	
-	
+	cout.tie(0);
+	makePrime();
+	int input;
 	while (true) {
-		int num;
-		cin >> num;
-		
-		if (num == 0)
+		cin >> input;
+		if (input == 0)
 			break;
-		setAB(num);
-		if (A==0&&B==0)
-			cout << "Goldbach's conjecture is wrong." << "\n";
+
+		int a=0, b=0;
+		for (int j = input-2; j >= 2; j--) {
+			if (prime[j]==false && prime[input-j]==false) {
+				b = j;
+				a = input - j;
+				break;
+			}
+		}
+		if (a != 0 && b != 0)
+			cout << input << " = " << a << " + " << b << "\n";
 		else
-			cout << num << " = " << A << " + " << B << "\n";
+			cout << "Goldbach's conjecture is wrong." << "\n";
 	}
 
-
-
+	
 	return 0;
 }
