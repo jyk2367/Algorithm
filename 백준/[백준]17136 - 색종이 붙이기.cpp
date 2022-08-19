@@ -7,26 +7,25 @@ using namespace std;
 
 //0 : 원본 값, 1 : 방문여부
 int paper[PaperRC][PaperRC];
-bool selected[PaperRC][PaperRC];
 int colorPaperCnt[6] = { 0,5,5,5,5,5 };
 int answer = 26;
 
-bool checkColorPaper(int x, int y, int type, vector<pair<int, int>>& selectedIJ) {
-	for (int i = x; i < (x + type); i++) {
-		for (int j = y; j < (y + type); j++) {
-			if (i < 0 || j < 0 || i >= PaperRC || j >= PaperRC) {
-				return false;
-			}
-			if (selected[i][j] == false && paper[i][j] == 1) {
-				selected[i][j] = true;
-				selectedIJ.push_back({ i,j });
-			}
-			else
+bool checkColorPaper(int x, int y, int type) {
+	for (int i = 0; i <type; i++) {
+		for (int j = 0; j < type; j++) {
+			if (x + i < 0 || y + j < 0 || x + i >= PaperRC || y + j >= PaperRC|| paper[x + i][y + j] == 0)
 				return false;
 		}
 	}
-
 	return true;
+}
+
+void switchingSelected(int x, int y, int type) {
+	for (int i = 0; i < type; i++) {
+		for (int j = 0; j < type; j++) {
+			paper[x + i][y + j] ^= 1;
+		}
+	}
 }
 
 void func(int i,int j,int k) {
@@ -35,31 +34,23 @@ void func(int i,int j,int k) {
 		return;
 	}
 
-	if (k > answer) {
-		return;
-	}
 	
 	int nextI = i + ((j + 1) / PaperRC);
 	int nextJ = (j + 1) % PaperRC;
 
-	if (paper[i][j] == 0 || selected[i][j] == true) {
+	if (paper[i][j] == 0) {
 		func(nextI, nextJ, k);
 	}
 	else{
 		for (int type =5; type>=1; type--) {
-			if (selected[i][j] == false && colorPaperCnt[type] > 0) {
+			if (checkColorPaper(i, j, type) && colorPaperCnt[type] > 0) {
 				// 원본값이 1이면서 방문한적 없다고 하면 색종이를 씌울수 있는지 확인
-				vector<pair<int, int>> selectedIJ;
-				bool state = checkColorPaper(i, j, type, selectedIJ);
-				if (state) {
-					colorPaperCnt[type] -= 1;
-					func(nextI, nextJ, k + 1);
-					colorPaperCnt[type] += 1;
-				}
-				for (const pair<int, int>& p : selectedIJ) {
-					selected[p.first][p.second] = false;
-				}
-				selectedIJ.clear();
+				colorPaperCnt[type] -= 1;
+				switchingSelected(i, j, type);
+				func(nextI, nextJ, k + 1);
+				switchingSelected(i, j, type);
+				colorPaperCnt[type] += 1;
+
 			}
 		}
 	}
